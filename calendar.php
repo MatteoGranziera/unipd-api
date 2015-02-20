@@ -72,6 +72,7 @@
 						$item["starth"] = $hr;
 						$item["startm"] = $min;
 						$item["descrizione"] = $col->find('a', 0)->innertext;
+						$item["docente"] = $col->find('h3', 0)->innertext;
 						$mult = $col->colspan * $inc;
 						$hr += floor($mult / 60);
 						$min += $mult % 60;
