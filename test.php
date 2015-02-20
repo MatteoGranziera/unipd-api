@@ -1,4 +1,8 @@
+<html>
+<body>
 <?php 
 	include 'calendar.php';
-	echo GetHTMLCalendar(21, null, null);
+	GetInformations(23, 2, 2015);
 ?>
+</body>
+</html>
