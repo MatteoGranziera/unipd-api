@@ -3,7 +3,7 @@
 	$uni_URL = 'http://www.unipordenone.it';
 	$calendar_path = '/mrbs/day.php';
 
-	function GetHTMLCalendar($day, $month, $year){
+	function GetHTMLCalendar($day, $month, $year, $area){
 		global $uni_URL, $calendar_path;
 		$post_array = array();
 
@@ -15,20 +15,10 @@
 
 		if($year != null)
 			$post_array["year"] = $year;
-		/*print_r($post_array);
-		echo $uni_URL . $calendar_path;*/
-		/*$opts = array (
-				        'http' => array (
-				                'method' => "POST",
-				                'header' => 'Content-Type: text/xml\r\n',
-				                'content' => $post_array 
-				        				) 
-						);
-		
-		$context = stream_context_create ( $opts );
 
-		$hrtml = file_get_html($uni_URL . $calendar_path, false, $context);
-	return $hrtml;*/
+		if($area != null)
+			$post_array["area"] = $area;
+		
 		//url-ify the data for the POST
 		$fields_string = "";
 		foreach($post_array as $key=>$value) 
@@ -55,8 +45,8 @@
 		return str_get_html($result); ;
 	}
 
-	function GetInformations($day, $month, $year){
-		$hrtml = GetHTMLCalendar($day, $month, $year);
+	function GetInformations($day, $month, $year, $area){
+		$hrtml = GetHTMLCalendar($day, $month, $year, $area);
 		$el = $hrtml->find('table[id=timetable]', 0);
 		$es = $el;
 		$rows = array();
@@ -66,6 +56,7 @@
 		$min = 0;
 		$inc = 30;
 		$found = false;
+		$aroom = -1;
 
 		foreach ($el->find('tr') as $row ) {
 			if (strpos($row->innertext, 'TSAC') !== false)
@@ -75,9 +66,9 @@
 		foreach ($rows as $r) {
 			foreach ($r->find('td') as $col) {
 				if($col->class != "room"){
-
 					if($col->colspan != null && strpos($col->innertext, 'TSAC') != false){
 						$item = array();
+						$item["room"] = $aroom;
 						$item["starth"] = $hr;
 						$item["startm"] = $min;
 						$item["descrizione"] = $col->find('a', 0)->innertext;
@@ -105,6 +96,9 @@
 					
 					
 				}
+				else{
+					$aroom = $col->find('h3', 0)->innertext;
+				}
 			}
 		}
 
@@ -113,7 +107,5 @@
 		return $es;
 
 	}
-
-
 
 ?>

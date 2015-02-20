@@ -1,8 +1,5 @@
-<html>
-<body>
 <?php 
 	include 'calendar.php';
-	GetInformations(23, 2, 2015);
+	GetInformations(23, 2, 2015, 4);
+	GetInformations(23, 2, 2015, 5);
 ?>
-</body>
-</html>
