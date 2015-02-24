@@ -33,7 +33,6 @@ public class TsacCalendarConfigureActivity extends Activity {
         setResult(RESULT_CANCELED);
 
         setContentView(R.layout.tsac_calendar_configure);
-        mAppWidgetText = (EditText) findViewById(R.id.appwidget_text);
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
 
         // Find the widget id from the intent.
@@ -49,8 +48,6 @@ public class TsacCalendarConfigureActivity extends Activity {
             finish();
             return;
         }
-
-        mAppWidgetText.setText(loadTitlePref(TsacCalendarConfigureActivity.this, mAppWidgetId));
     }
 
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -58,8 +55,7 @@ public class TsacCalendarConfigureActivity extends Activity {
             final Context context = TsacCalendarConfigureActivity.this;
 
             // When the button is clicked, store the string locally
-            String widgetText = mAppWidgetText.getText().toString();
-            saveTitlePref(context, mAppWidgetId, widgetText);
+            saveTitlePref(context, mAppWidgetId, "TSACCalendar");
 
             // It is the responsibility of the configuration activity to update the app widget
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
