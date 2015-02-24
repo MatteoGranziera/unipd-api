@@ -66,20 +66,31 @@
 		foreach ($rows as $r) {
 			foreach ($r->find('td') as $col) {
 				if($col->class != "room"){
-					if($col->colspan != null && strpos($col->innertext, 'TSAC') != false){
-						$item = array();
-						$item["room"] = $aroom;
-						$item["starth"] = $hr;
-						$item["startm"] = $min;
-						$item["descrizione"] = $col->find('a', 0)->innertext;
-						$item["docente"] = $col->find('h3', 0)->innertext;
-						$mult = $col->colspan * $inc;
-						$hr += floor($mult / 60);
-						$min += $mult % 60;
-						$item['endh'] = $hr;
-						$item['endm'] = $min;
+					//echo "Element: H: ". $hr .":". $min ."</br>" . $col;
+					//echo "<hr>";
+					if($col->colspan != null){
+						//echo "Element: </br>" . $col;
+						if(strpos($col->innertext, 'TSAC') != false){
 
-						array_push($array_result, $item);
+							$item = array();
+							$item["room"] = $aroom;
+							$item["starth"] = $hr;
+							$item["startm"] = $min;
+							$item["descrizione"] = $col->find('a', 0)->innertext;
+							$item["docente"] = $col->find('h3', 0)->innertext;
+							$mult = $col->colspan * $inc;
+							$hr += floor($mult / 60);
+							$min += $mult % 60;
+							$item['endh'] = $hr;
+							$item['endm'] = $min;
+
+							array_push($array_result, $item);
+						}
+						else{
+							$mult = $col->colspan * $inc;
+							$hr += floor($mult / 60);
+							$min += $mult % 60;
+						}
 					}
 					else{
 						if($min == $inc){
@@ -103,10 +114,67 @@
 			}
 		}
 
-		print_r($array_result);
+		//print_r($array_result);
 
-		return $es;
+		return $array_result;
 
+	}
+
+	if(isset($_GET['action'])){
+		//echo 'Action: ' . $_GET['action'] . '</br>';
+		if($_GET['action'] == 'gettsacday'){
+			if(isset($_GET['d']))
+			{
+				$day = $_GET['d'];
+			}
+			else
+			{
+				$now = date("d");
+				$day = $now;
+			}
+			//echo 'Day: ' . $day . '</br>';
+
+			if(isset($_GET['m']))
+			{
+				$month = $_GET['m'];
+			}
+			else
+			{
+				$now = date("m");
+				$month = $now;
+			}
+			//echo 'Month: ' . $month . '</br>';
+
+			if(isset($_GET['y']))
+			{
+				$year = $_GET['y'];
+			}
+			else
+			{
+				$now = date("y");
+				$year = $now;
+			}
+
+			if(isset($_GET['r']))
+			{
+				$room = $_GET['r'];
+			}
+			else
+			{
+				$room = 'B';
+			}
+
+			//echo 'Room: ' . $room . '</br>';
+
+			if($room == 'B'){
+				$room = 4;
+			}
+			else if($room == 'S'){
+				$room = 5;
+			}
+			header('Content-type: application/json');
+			echo json_encode(GetInformations($day, $month, $year, $room ));
+		}
 	}
 
 ?>
