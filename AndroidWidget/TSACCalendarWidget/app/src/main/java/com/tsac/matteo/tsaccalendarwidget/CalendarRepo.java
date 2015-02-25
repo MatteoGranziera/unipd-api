@@ -1,5 +1,8 @@
 package com.tsac.matteo.tsaccalendarwidget;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.text.Layout;
@@ -22,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.Console;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -32,9 +36,10 @@ import java.util.ListIterator;
 /**
  * Created by Matteo on 23/02/2015.
  */
-public class CalendarRepo extends AsyncTask<String, Void, CalendarElement[]> {
+public class CalendarRepo extends AsyncTask<String, Void, Boolean> {
+    Context context;
     String url = "http://tomokitest.netii.net/API/unipd/calendar.php?action=gettsacday";
-    ListView lst;
+
     // JSON tag names
     private static final String TAG_ROOM = "room";
     private static final String TAG_STARTHOUR = "starth";
@@ -49,8 +54,7 @@ public class CalendarRepo extends AsyncTask<String, Void, CalendarElement[]> {
 
     BufferedReader in = null;
     String data = null;
-
-    TextView txtView;
+    List<CalendarElement> listItem = null;
 
     @Override
     protected void onPreExecute() {
@@ -100,48 +104,60 @@ public class CalendarRepo extends AsyncTask<String, Void, CalendarElement[]> {
         }
     }
 
-    protected CalendarElement[] doInBackground(String... urls) {
+    protected Boolean doInBackground(String... urls) {
         Time now = new Time();
         now.setToNow();
         CalendarElement el = new CalendarElement();
-        el.day = now;
-        return ParseData(SendRequest(now.monthDay, now.month, now.year), el);
+        el.setDay(now);
+        ArrayList<CalendarElement> elements =  ParseData(SendRequest(now.monthDay, now.month, now.year), el);
+        listItem = elements;
+
+        RemoteViews rv = new RemoteViews(context.getPackageName(),
+                R.layout.tsac_calendar);
+
+        Intent intent = new Intent(context, WidgetService.class);
+        intent.putParcelableArrayListExtra("ListItem", elements);
+        intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+
+        rv.setRemoteAdapter(R.id.listView, intent);
+
+
+        return true;
     }
 
     /** The system calls this to perform work in the UI thread and delivers
      * the result from doInBackground() */
     protected void onPostExecute(String result) {
-        lst = (ListView) findViewById(R.id.listView);
+
     }
 
-    private CalendarElement[] ParseData(String data, CalendarElement def){
-        CalendarElement[] array = null;
+    private ArrayList<CalendarElement> ParseData(String data, CalendarElement def){
+        ArrayList<CalendarElement> array = null;
 
         if (data != null) {
             try {
                 JSONArray ar = new JSONArray(data);
-                array = new CalendarElement[ar.length()];
+                array = new ArrayList<CalendarElement>();
                 for(int i = 0; i< ar.length(); i++) {
                     CalendarElement el = new CalendarElement();
-                    el.day = def.day;
+                    el.setDay(def.getDay());
 
                     JSONObject c = ar.getJSONObject(i);
-                    el.room = c.getString(TAG_ROOM);
+                    el.setRoom(c.getString(TAG_ROOM));
 
                     Time ti = new Time();
                     ti.hour = c.getInt(TAG_STARTHOUR);
                     ti.minute = c.getInt(TAG_STARTMIN);
-                    el.start = ti;
+                    el.setStart(ti);
 
                     Time te = new Time();
                     te.hour = c.getInt(TAG_ENDHOUR);
                     te.minute = c.getInt(TAG_ENDMIN);
-                    el.end = te;
+                    el.setEnd(te);
 
-                    el.description = c.getString(TAG_DESCRIPTION);
-                    el.prof = c.getString(TAG_PROF);
+                    el.setProf(c.getString(TAG_PROF));
 
-                    array[i] = el;
+                    array.add(el);
                 }
 
 
