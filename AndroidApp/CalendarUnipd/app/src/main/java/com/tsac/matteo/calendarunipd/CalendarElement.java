@@ -17,7 +17,7 @@ public class CalendarElement implements Parcelable {
     private Time start;
     private Time end;
     private String room;
-
+    public boolean separator = false;
 
 
     public CalendarElement(){

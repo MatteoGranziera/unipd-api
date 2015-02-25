@@ -6,27 +6,63 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity {
 
     ListView lstView = null;
+    ProgressBar prbUpdate = null;
+    EditText days = null;
+    Toast tstError = null;
+    ProgressBar prbProgress = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         lstView = (ListView) findViewById(R.id.lstLessons);
+        prbUpdate = (ProgressBar) findViewById(R.id.prbUpdate);
+        prbUpdate.setVisibility(View.INVISIBLE);
+        prbProgress = (ProgressBar) findViewById(R.id.prbProgress);
+        prbProgress.setProgress(0);
+        days = (EditText) findViewById(R.id.txtDays);
+        tstError = new Toast(getApplicationContext());
 
         Button btnUpdate = (Button)findViewById(R.id.btnUpdate);
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CalendarRepo repo = new CalendarRepo();
-                repo.context = getApplicationContext();
-                repo.lstView = lstView;
-                repo.execute();
+                int daysValue = 0;
+                boolean ok = false;
+                try {
+                    daysValue = Integer.parseInt(days.getText().toString());
+                    ok = true;
+                }catch(Exception e){
+                    tstError.setText("Il numero di giorni inserito non è valido!");
+                    days.setText("0");
+                    tstError.show();
+                }
+                 if(ok) {
+                     if(daysValue < 0 || daysValue > 30){
+                         tstError.setText("Il nomero deve essere compreso tra 0 e 30, è stato reimpostato il valore di default");
+                         days.setText("0");
+                         tstError.show();
+                         daysValue = 0;
+                     }
+                     CalendarRepo repo = new CalendarRepo();
+                     repo.context = getApplicationContext();
+                     repo.lstView = lstView;
+                     repo.prbUpdate = prbUpdate;
+                     repo.prbProgress = prbProgress;
+                     repo.nextDays = daysValue;
+
+                     repo.execute();
+                 }
             }
         });
     }

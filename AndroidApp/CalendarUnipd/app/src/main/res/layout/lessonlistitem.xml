@@ -6,13 +6,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/txtLezione"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/txtStanza"
-        android:layout_alignRight="@+id/txtOrario"
-        android:layout_alignEnd="@+id/txtOrario" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#000"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -20,9 +20,10 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Small Text"
         android:id="@+id/txtOrario"
-        android:layout_below="@+id/txtLezione"
+        android:layout_below="@+id/txtDocente"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:textColor="#ff282828"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -30,18 +31,20 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
         android:id="@+id/txtDocente"
-        android:layout_below="@+id/txtLezione"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignTop="@+id/txtStanza"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="#000"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Large"
         android:id="@+id/txtStanza"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/txtLezione"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textColor="#000"/>
 
 </RelativeLayout>
