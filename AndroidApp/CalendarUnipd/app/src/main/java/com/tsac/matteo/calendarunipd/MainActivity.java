@@ -17,7 +17,6 @@ public class MainActivity extends ActionBarActivity {
     ListView lstView = null;
     ProgressBar prbUpdate = null;
     EditText days = null;
-    Toast tstError = null;
     ProgressBar prbProgress = null;
 
     @Override
@@ -31,7 +30,6 @@ public class MainActivity extends ActionBarActivity {
         prbProgress = (ProgressBar) findViewById(R.id.prbProgress);
         prbProgress.setProgress(0);
         days = (EditText) findViewById(R.id.txtDays);
-        tstError = new Toast(getApplicationContext());
 
         Button btnUpdate = (Button)findViewById(R.id.btnUpdate);
         btnUpdate.setOnClickListener(new View.OnClickListener() {
@@ -43,15 +41,14 @@ public class MainActivity extends ActionBarActivity {
                     daysValue = Integer.parseInt(days.getText().toString());
                     ok = true;
                 }catch(Exception e){
-                    tstError.setText("Il numero di giorni inserito non è valido!");
+                    Toast.makeText(getApplicationContext(),"Il numero di giorni inserito non è valido!", Toast.LENGTH_SHORT).show();
                     days.setText("0");
-                    tstError.show();
+
                 }
                  if(ok) {
                      if(daysValue < 0 || daysValue > 30){
-                         tstError.setText("Il nomero deve essere compreso tra 0 e 30, è stato reimpostato il valore di default");
+                         Toast.makeText(getApplicationContext(),"Il nomero deve essere compreso tra 0 e 30, è stato reimpostato il valore di default", Toast.LENGTH_SHORT).show();
                          days.setText("0");
-                         tstError.show();
                          daysValue = 0;
                      }
                      CalendarRepo repo = new CalendarRepo();
